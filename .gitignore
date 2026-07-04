@@ -15,3 +15,5 @@ start-server*.log
 
 dev-ui*.log
 start-ui*.log
+
+deploy-zips/
