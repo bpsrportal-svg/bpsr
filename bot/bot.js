@@ -29,6 +29,10 @@ const { startBotJobWorker } = require('./job-worker');
 const config = botConfig();
 const sessions = new Map();
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+function appUrl(path = '/') {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://bpsr-dun.vercel.app';
+  return `${baseUrl.replace(/\/$/, '')}${path}`;
+}
 
 function sanitizeChannelName(value) {
   return String(value || 'user')
@@ -128,6 +132,12 @@ async function handleProofCreate(interaction) {
   return interaction.reply({ content: `証明チャンネルを用意しました: ${channel}`, ephemeral: true });
 }
 
+
+async function handleRecruitCreateLink(interaction) {
+  const profile = await db.getProfile(interaction.user.id);
+  if (!profile) return interaction.reply({ content: `プロフィールを先に登録してください。\n${appUrl('/profile')}`, ephemeral: true });
+  return interaction.reply({ content: `募集作成はWebで行います。\n${appUrl('/recruitments/new')}`, ephemeral: true });
+}
 async function startRecruitWizard(interaction) {
   const profile = await db.getProfile(interaction.user.id);
   if (!profile) return interaction.reply({ content: 'プロフィールが未登録です。Webサイトでプロフィールを登録してください。', ephemeral: true });
@@ -414,7 +424,7 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.isChatInputCommand()) {
       if (interaction.commandName === 'profile') return handleProfile(interaction);
       if (interaction.commandName === 'proof-create') return handleProofCreate(interaction);
-      if (interaction.commandName === 'recruit-create') return startRecruitWizard(interaction);
+      if (interaction.commandName === 'recruit-create') return handleRecruitCreateLink(interaction);
     }
     if (interaction.isStringSelectMenu()) {
       const [scope, action, sessionId, role] = interaction.customId.split(':');

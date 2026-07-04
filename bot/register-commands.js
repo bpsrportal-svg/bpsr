@@ -9,10 +9,10 @@ async function main() {
       .setDescription('自分のプロフィールを表示します'),
     new SlashCommandBuilder()
       .setName('proof-create')
-      .setDescription('本人専用の証明チャンネルを作成します'),
+      .setDescription('任意の証明チャンネルを作成します'),
     new SlashCommandBuilder()
       .setName('recruit-create')
-      .setDescription('募集作成ウィザードを開始します'),
+      .setDescription('Webの募集作成ページを表示します'),
   ].map((command) => command.toJSON());
 
   const rest = new REST({ version: '10' }).setToken(config.token);
