@@ -189,6 +189,84 @@ async function clearProofPermissions(recruitmentId) {
   return must(supabase.from('proof_permissions').delete().eq('recruitment_id', recruitmentId).select('*'));
 }
 
+
+async function getApprovedApplications(recruitmentId) {
+  return must(
+    supabase
+      .from('recruitment_applications')
+      .select('id, applicant_discord_user_id, requested_role, status, created_at')
+      .eq('recruitment_id', recruitmentId)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: true }),
+  );
+}
+
+async function getPendingBotJobs(limit = 5) {
+  return must(
+    supabase
+      .from('discord_bot_jobs')
+      .select('*')
+      .eq('status', 'pending')
+      .lte('available_at', new Date().toISOString())
+      .order('available_at', { ascending: true })
+      .order('id', { ascending: true })
+      .limit(limit),
+  );
+}
+
+async function markBotJobProcessing(job) {
+  return must(
+    supabase
+      .from('discord_bot_jobs')
+      .update({
+        status: 'processing',
+        attempts: Number(job.attempts || 0) + 1,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', job.id)
+      .eq('status', 'pending')
+      .select('*')
+      .maybeSingle(),
+  );
+}
+
+async function markBotJobDone(jobId) {
+  return must(
+    supabase
+      .from('discord_bot_jobs')
+      .update({ status: 'done', updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+      .eq('id', jobId)
+      .select('*')
+      .single(),
+  );
+}
+
+async function markBotJobFailed(job, error) {
+  const attempts = Number(job.attempts || 0);
+  const shouldRetry = attempts < 5;
+  const nextAvailable = new Date(Date.now() + Math.min(60000 * Math.max(attempts, 1), 300000)).toISOString();
+  return must(
+    supabase
+      .from('discord_bot_jobs')
+      .update({
+        status: shouldRetry ? 'pending' : 'failed',
+        last_error: String(error?.message || error).slice(0, 1000),
+        available_at: shouldRetry ? nextAvailable : job.available_at,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', job.id)
+      .select('*')
+      .single(),
+  );
+}
+
+async function updateRecruitmentDiscordNotification(recruitmentId, channelId, messageId) {
+  return updateRecruitment(recruitmentId, {
+    discord_notification_channel_id: channelId,
+    discord_notification_message_id: messageId,
+  });
+}
+
 module.exports = {
   ensureSlots,
   getProfile,
@@ -206,4 +284,10 @@ module.exports = {
   recordProofPermission,
   getProofPermissions,
   clearProofPermissions,
+  getApprovedApplications,
+  getPendingBotJobs,
+  markBotJobProcessing,
+  markBotJobDone,
+  markBotJobFailed,
+  updateRecruitmentDiscordNotification,
 };
