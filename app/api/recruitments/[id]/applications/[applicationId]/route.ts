@@ -80,14 +80,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (action === "reject") {
     const { error } = await supabase
       .from("recruitment_applications")
-      .update({ status: "rejected", reviewed_at: now, updated_at: now })
+      .delete()
       .eq("id", appId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, status: "rejected" });
+    return NextResponse.json({ ok: true, status: "rejected", deleted: true });
   }
 
   const roleSlots = recruitment.role_slots as Record<string, { required?: number; accepted?: number }>;
