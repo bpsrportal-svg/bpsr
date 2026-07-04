@@ -125,7 +125,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   if (nextStatus === "in_progress") {
     const { error: jobError } = await supabase.from("discord_bot_jobs").insert({
-      job_type: "party_create",
+      job_type: "party_ready_notify",
       recruitment_id: recruitmentId,
       payload: { recruitmentId },
       status: "pending",

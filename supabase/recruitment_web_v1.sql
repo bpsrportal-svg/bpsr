@@ -168,7 +168,7 @@ create index if not exists idx_recruitment_applications_status on public.recruit
 
 create table if not exists public.discord_bot_jobs (
   id bigserial primary key,
-  job_type text not null check (job_type in ('recruitment_notify', 'recruitment_update', 'application_notify', 'party_create', 'party_close')),
+  job_type text not null check (job_type in ('recruitment_notify', 'recruitment_update', 'application_notify', 'party_ready_notify', 'party_create', 'party_close')),
   status text not null default 'pending' check (status in ('pending', 'processing', 'done', 'failed')),
   recruitment_id bigint references public.recruitments(id) on delete cascade,
   payload jsonb not null default '{}'::jsonb,

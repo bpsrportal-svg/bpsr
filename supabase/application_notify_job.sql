@@ -8,6 +8,7 @@ alter table public.discord_bot_jobs
     'recruitment_notify',
     'recruitment_update',
     'application_notify',
+    'party_ready_notify',
     'party_create',
     'party_close'
   ));

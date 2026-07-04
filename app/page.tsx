@@ -19,7 +19,7 @@ export default async function Home() {
           <p className="eyebrow">BPSRPortal</p>
           <h1>募集を探す時間を減らし、遊ぶ時間を増やす。</h1>
           <p className="lead">
-            Discordと連携したゲームコミュニティポータルです。募集の検索、作成、申請、承認をWebで完結し、Discordには通知とVCを自動でつなぎます。
+            Discordと連携したゲームコミュニティポータルです。募集の検索、作成、申請、承認をWebで完結し、Discordには募集通知と参加確定DMをつなぎます。
           </p>
           <div className="hero-actions">
             <Link className="button primary" href="/recruitments">
@@ -89,7 +89,7 @@ export default async function Home() {
               <Bell size={18} aria-hidden="true" />
               <h2>Discord連携</h2>
             </div>
-            <p>募集作成後、対象ロールへ通知し、人数が揃ったらVCとパーティチャンネルをBotが作成します。</p>
+            <p>募集作成後はDiscordへ通知し、人数が揃ったら募集主と参加者へBotがDM通知します。</p>
           </section>
 
           <section className="compact-panel">

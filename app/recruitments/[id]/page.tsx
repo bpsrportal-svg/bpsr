@@ -30,7 +30,7 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
           </Link>
           <p className="eyebrow">Recruitment Detail</p>
           <h1>{recruitment.title}</h1>
-          <p className="lead">申請、承認、パーティ編成をこの詳細ページに集約する想定です。</p>
+          <p className="lead">申請、承認、参加確定までをこの詳細ページに集約します。</p>
         </div>
         <button className="button primary" type="button" disabled>
           <Send size={17} aria-hidden="true" />
@@ -84,9 +84,9 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
           <section className="compact-panel">
             <div className="panel-title-row">
               <Headphones size={18} aria-hidden="true" />
-              <h2>パーティ作成</h2>
+              <h2>参加確定通知</h2>
             </div>
-            <p>承認人数が揃った時点で、Botが必要なVCとパーティチャンネルを作成します。</p>
+            <p>承認人数が揃った時点で、Botが募集主と参加者へDM通知します。</p>
           </section>
 
           <section className="compact-panel">

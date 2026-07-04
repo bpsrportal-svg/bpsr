@@ -112,55 +112,65 @@ async function handleApplicationNotify(client, job) {
   ].filter(Boolean).join('\n'));
 }
 
-async function handlePartyCreate(client, job) {
-  const config = botConfig();
+function profileSummary(profile) {
+  const name = profile.character_name || profile.discord_global_name || profile.discord_username || profile.discord_user_id;
+  const className = profile.class_name || '-';
+  return `${name} / ${className}`;
+}
+
+async function sendDm(client, discordUserId, content) {
+  try {
+    const user = await client.users.fetch(discordUserId);
+    await user.send(content);
+    return { ok: true };
+  } catch (error) {
+    console.warn(`DM notify failed for ${discordUserId}:`, error?.message || error);
+    return { ok: false, error };
+  }
+}
+
+async function handlePartyReadyNotify(client, job) {
   const recruitment = await db.getRecruitment(job.recruitment_id);
   if (!recruitment) throw new Error(`Recruitment not found: ${job.recruitment_id}`);
-  if (recruitment.party_channel_id) return;
 
-  const guild = await client.guilds.fetch(config.guildId);
   const host = await db.getProfile(recruitment.owner_discord_user_id);
   if (!host) throw new Error(`Recruitment host profile not found: ${recruitment.owner_discord_user_id}`);
 
   const applications = await db.getApprovedApplications(recruitment.id);
-  const memberIds = [recruitment.owner_discord_user_id, ...applications.map((application) => application.applicant_discord_user_id)];
-  const category = await findOrCreateCategory(guild, config.partyCategoryId, config.partyCategoryName);
-  const hostName = host.character_name || host.discord_global_name || host.discord_username || '募集主';
-  const overwrites = privateOverwrites(guild, client, memberIds, config.operationsRoleId);
-
-  const partyChannel = await guild.channels.create({
-    name: sanitizeChannelName(`🔒${hostName}のパーティ`),
-    type: 0,
-    parent: category.id,
-    permissionOverwrites: overwrites,
-  });
-
-  let vcChannelId = recruitment.vc_channel_id || null;
-  if (recruitment.vc_mode === 'あり' || recruitment.vc_mode === 'あり（プライベート）') {
-    const vc = await guild.channels.create({
-      name: sanitizeChannelName(`${hostName}のVC`),
-      type: 2,
-      parent: config.publicVcCategoryId || category.id,
-      permissionOverwrites: recruitment.vc_mode === 'あり（プライベート）' ? overwrites : undefined,
-    });
-    vcChannelId = vc.id;
+  const memberProfiles = [];
+  for (const application of applications) {
+    const profile = await db.getProfile(application.applicant_discord_user_id);
+    if (profile) memberProfiles.push({ application, profile });
   }
 
-  await partyChannel.send({
-    content: [
-      'パーティチャンネルを作成しました。',
+  const detailUrl = publicRecruitmentUrl(recruitment.id);
+  const participantLines = memberProfiles.length
+    ? memberProfiles.map(({ application, profile }) => `- ${application.requested_role}: ${profileSummary(profile)}`).join('\n')
+    : '- 承認済み参加者なし';
+
+  const results = [];
+  results.push(await sendDm(client, recruitment.owner_discord_user_id, [
+    '必要人数が揃いました。',
+    `募集: ${recruitment.title}`,
+    '参加者:',
+    participantLines,
+    `詳細: ${detailUrl}`,
+  ].join('\n')));
+
+  for (const { application, profile } of memberProfiles) {
+    results.push(await sendDm(client, application.applicant_discord_user_id, [
+      '参加が確定しました。',
       `募集: ${recruitment.title}`,
-      `Web: ${publicRecruitmentUrl(recruitment.id)}`,
-      vcChannelId ? `VC: <#${vcChannelId}>` : null,
-    ].filter(Boolean).join('\n'),
-  });
+      `募集主: ${profileSummary(host)}`,
+      `あなたのロール: ${application.requested_role}`,
+      `詳細: ${detailUrl}`,
+    ].join('\n')));
+  }
 
-  await db.updateRecruitment(recruitment.id, {
-    party_channel_id: partyChannel.id,
-    vc_channel_id: vcChannelId,
-  });
+  if (!results.some((result) => result.ok)) {
+    throw new Error('All party-ready DM notifications failed.');
+  }
 }
-
 async function handleJob(client, job) {
   if (job.job_type === 'recruitment_notify') {
     await handleRecruitmentNotify(client, job);
@@ -172,8 +182,8 @@ async function handleJob(client, job) {
     return;
   }
 
-  if (job.job_type === 'party_create') {
-    await handlePartyCreate(client, job);
+  if (job.job_type === 'party_ready_notify' || job.job_type === 'party_create') {
+    await handlePartyReadyNotify(client, job);
     return;
   }
 

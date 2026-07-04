@@ -87,7 +87,7 @@ function profileEmbed(profile, title = 'プロフィール') {
 }
 
 function statusLabel(status) {
-  if (status === 'in_progress') return '🟡 パーティ編成中';
+  if (status === 'in_progress') return '🟡 参加確定';
   if (status === 'closed') return '🔴 募集終了';
   return '🟢 募集中';
 }

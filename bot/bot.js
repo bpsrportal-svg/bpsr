@@ -362,11 +362,10 @@ async function handleApprove(interaction, applicationId) {
   recruitment = await db.updateRecruitment(recruitment.id, { role_slots: recruitment.role_slots });
   if (isFull(recruitment)) {
     recruitment = await db.updateRecruitment(recruitment.id, { status: 'in_progress' });
-    recruitment = await createPartyChannelsAndPermissions(interaction.guild, recruitment);
   }
   await updatePublicRecruitmentMessage(recruitment.id);
   await interaction.message.edit({ components: [] }).catch(() => null);
-  return interaction.editReply(isFull(recruitment) ? '承認しました。必要人数が集まったためパーティチャンネルを作成しました。' : '承認しました。');
+  return interaction.editReply(isFull(recruitment) ? '承認しました。必要人数が集まりました。募集主と参加者へDM通知します。' : '承認しました。');
 }
 
 async function handleReject(interaction, applicationId) {

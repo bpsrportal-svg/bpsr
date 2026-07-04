@@ -7,7 +7,7 @@ function formatNumber(value: number) {
 }
 
 function statusLabel(status: Recruitment["status"]) {
-  if (status === "in_progress") return "編成中";
+  if (status === "in_progress") return "参加確定";
   if (status === "closed") return "終了";
   return "募集中";
 }
