@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, CheckCircle2, Headphones, Info, Send } from "lucide-react";
 
@@ -55,7 +55,25 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
   const filteredModes = useMemo(() => modeOptions.filter((mode) => mode.content_id === contentId), [contentId, modeOptions]);
   const selectedModeId = modeId || filteredModes[0]?.id || 0;
 
-  async function handleSubmit() {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const trimmedTitle = title.trim();
+    if (trimmedTitle.length < 4) {
+      setMessage("タイトルは4文字以上で入力してください");
+      return;
+    }
+
+    if (!selectedModeId) {
+      setMessage("コンテンツとモードを選択してください");
+      return;
+    }
+
+    if (dps + tank + healer <= 0) {
+      setMessage("募集人数を1人以上にしてください");
+      return;
+    }
+
     setIsSaving(true);
     setMessage("保存中...");
 
@@ -67,7 +85,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
     const payload = {
       contentId,
       modeId: selectedModeId,
-      title,
+      title: trimmedTitle,
       conditions,
       vcMode,
       roleSlots: {
@@ -82,27 +100,32 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
       }
     };
 
-    const response = await fetch("/api/recruitments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await fetch("/api/recruitments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (!response.ok) {
-      setMessage(result.error || "保存できませんでした");
+      if (!response.ok) {
+        setMessage(result.error || "保存できませんでした");
+        setIsSaving(false);
+        return;
+      }
+
+      router.push(`/recruitments/${result.recruitmentId}`);
+      router.refresh();
+    } catch {
+      setMessage("通信エラーで保存できませんでした");
       setIsSaving(false);
-      return;
     }
-
-    router.push(`/recruitments/${result.recruitmentId}`);
-    router.refresh();
   }
 
   return (
     <section className="create-layout">
-      <form className="create-form" action={handleSubmit}>
+      <form className="create-form" onSubmit={handleSubmit}>
         <section className="form-section portal-form-section">
           <div className="panel-title-row">
             <Info size={18} aria-hidden="true" />
@@ -125,7 +148,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
             </label>
             <label className="span-2">
               タイトル
-              <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="例: 衰亡の深淵 装備周回 5周予定" />
+              <input value={title} onChange={(event) => setTitle(event.target.value)} minLength={4} placeholder="例: 衰亡の深淵 装備周回 5周予定" />
             </label>
             <label className="span-2">
               条件
@@ -173,7 +196,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
 
         <div className="save-bar portal-save-bar">
           <p className={message.includes("できません") ? "message error" : "message"}>{message}</p>
-          <button className="button primary" type="submit" disabled={isSaving || !title || !selectedModeId}>
+          <button className="button primary" type="submit" disabled={isSaving}>
             <Send size={17} aria-hidden="true" />
             募集を開始
           </button>
