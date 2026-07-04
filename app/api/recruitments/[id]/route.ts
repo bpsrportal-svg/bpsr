@@ -51,7 +51,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
   const { data: applications, error: applicationsError } = await supabase
     .from("recruitment_applications")
-    .select("id, applicant_discord_user_id, requested_role, message, status, created_at, profiles:applicant_discord_user_id(character_name, uid, class_name, power, dps_3min, discord_global_name, discord_username, discord_avatar)")
+    .select("id, applicant_discord_user_id, requested_role, message, status, created_at, profiles:applicant_discord_user_id(character_name, uid, class_name, power, dps_3min, sea_weapon_level, discord_global_name, discord_username, discord_avatar, profile_updated_at)")
     .eq("recruitment_id", Number(id))
     .order("created_at", { ascending: true });
 

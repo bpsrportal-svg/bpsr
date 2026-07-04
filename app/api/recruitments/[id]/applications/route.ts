@@ -31,7 +31,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   const { data: recruitment, error: recruitmentError } = await supabase
     .from("recruitments")
-    .select("id, owner_discord_user_id, status, role_slots")
+    .select("id, owner_discord_user_id, status, role_slots, title")
     .eq("id", recruitmentId)
     .maybeSingle();
 
@@ -91,5 +91,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: applicationError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, applicationId: application.id });
+  const { error: jobError } = await supabase.from("discord_bot_jobs").insert({
+    job_type: "application_notify",
+    recruitment_id: recruitmentId,
+    payload: {
+      recruitmentId,
+      applicationId: application.id,
+      applicantDiscordUserId: user.id,
+      ownerDiscordUserId: recruitment.owner_discord_user_id
+    },
+    status: "pending",
+    available_at: now
+  });
+
+  return NextResponse.json({ ok: true, applicationId: application.id, notificationQueued: !jobError });
 }

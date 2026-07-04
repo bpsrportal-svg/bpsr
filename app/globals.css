@@ -1230,28 +1230,81 @@ textarea:focus {
 
 .application-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
-  align-items: center;
   padding: 12px;
   border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: rgba(2, 6, 23, 0.22);
 }
 
-.application-card strong,
-.application-card span {
-  display: block;
+.application-card.open {
+  background: rgba(11, 18, 32, 0.62);
+  border-color: rgba(49, 208, 170, 0.36);
 }
 
-.application-card span {
-  margin-top: 3px;
+.application-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.application-name-button {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.application-name-button strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+.application-detail {
+  display: grid;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.application-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.application-detail-grid div,
+.application-note {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.application-detail-grid dt,
+.application-note span {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.application-card p {
-  margin: 8px 0 0;
+.application-detail-grid dd {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.application-note p {
+  margin: 6px 0 0;
   color: var(--muted-strong);
   line-height: 1.5;
 }
@@ -1260,16 +1313,17 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 760px) {
-  .application-card,
-  .application-actions {
+  .application-summary,
+  .application-detail-grid {
     grid-template-columns: 1fr;
   }
 
-  .application-actions {
-    justify-content: flex-start;
-    flex-wrap: wrap;
+  .application-summary .button {
+    width: 100%;
+    justify-content: center;
   }
 }

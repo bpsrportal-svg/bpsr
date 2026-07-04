@@ -72,6 +72,46 @@ async function handleRecruitmentNotify(client, job) {
   await db.updateRecruitmentDiscordNotification(recruitment.id, channel.id, message.id);
 }
 
+function formatApplicantLine(profile) {
+  const name = profile.character_name || profile.discord_global_name || profile.discord_username || profile.discord_user_id;
+  const className = profile.class_name || '-';
+  const power = Number(profile.power || 0).toLocaleString('ja-JP');
+  const dps = Number(profile.dps_3min || 0).toLocaleString('ja-JP');
+  return `${name} / ${className} / 戦力 ${power} / DPS ${dps}`;
+}
+
+async function handleApplicationNotify(client, job) {
+  const recruitment = await db.getRecruitment(job.recruitment_id);
+  if (!recruitment) {
+    throw new Error(`Recruitment not found: ${job.recruitment_id}`);
+  }
+
+  const applicationId = job.payload?.applicationId;
+  if (!applicationId) {
+    throw new Error('application_notify payload.applicationId is missing.');
+  }
+
+  const application = await db.getApplication(applicationId);
+  if (!application) {
+    throw new Error(`Application not found: ${applicationId}`);
+  }
+
+  const applicant = await db.getProfile(application.applicant_discord_user_id);
+  if (!applicant) {
+    throw new Error(`Applicant profile not found: ${application.applicant_discord_user_id}`);
+  }
+
+  const owner = await client.users.fetch(recruitment.owner_discord_user_id);
+  await owner.send([
+    '募集に申請が来ました。',
+    `募集: ${recruitment.title}`,
+    `申請者: ${formatApplicantLine(applicant)}`,
+    `申請ロール: ${application.requested_role}`,
+    application.message ? `コメント: ${application.message}` : null,
+    `詳細: ${publicRecruitmentUrl(recruitment.id)}`,
+  ].filter(Boolean).join('\n'));
+}
+
 async function handlePartyCreate(client, job) {
   const config = botConfig();
   const recruitment = await db.getRecruitment(job.recruitment_id);
@@ -124,6 +164,11 @@ async function handlePartyCreate(client, job) {
 async function handleJob(client, job) {
   if (job.job_type === 'recruitment_notify') {
     await handleRecruitmentNotify(client, job);
+    return;
+  }
+
+  if (job.job_type === 'application_notify') {
+    await handleApplicationNotify(client, job);
     return;
   }
 
