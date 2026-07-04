@@ -1,6 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 const { ROLE_LABELS, ROLE_ORDER } = require('./config');
 
+const IMAGINE_CATEGORY_ORDER = ['S1', 'S2', 'S3', 'EVENT'];
+
 function formatNumber(value) {
   if (value === null || value === undefined || value === '') return '-';
   const number = Number(value);
@@ -54,6 +56,10 @@ function profileFields(profile) {
   ];
 }
 
+function categoryLabel(category) {
+  return category === 'EVENT' ? 'イベント' : category;
+}
+
 function imagineText(profile) {
   const owned = (profile.imagines || []).filter((imagine) => Number(imagine.limit_break) >= 0);
   if (!owned.length) return '所持イマジンなし';
@@ -62,8 +68,9 @@ function imagineText(profile) {
     acc[imagine.category].push(`${imagine.name}: ${formatLimitBreak(imagine.limit_break)}`);
     return acc;
   }, {});
-  return Object.entries(byCategory)
-    .map(([category, values]) => `**${category}**\n${values.join('\n')}`)
+  return IMAGINE_CATEGORY_ORDER
+    .filter((category) => byCategory[category]?.length)
+    .map((category) => `**${categoryLabel(category)}**\n${byCategory[category].join('\n')}`)
     .join('\n\n');
 }
 
@@ -100,7 +107,6 @@ function recruitmentEmbed(recruitment, hostProfile) {
     .addFields(
       { name: 'コンテンツ', value: `${recruitment.content_category} / ${recruitment.content_name}${recruitment.content_mode ? ` / ${recruitment.content_mode}` : ''}`, inline: false },
       { name: '条件', value: recruitment.conditions || '-', inline: false },
-      { name: '同行者', value: recruitment.companions || '-', inline: false },
       { name: 'VC', value: recruitment.vc_mode || 'なし', inline: true },
       { name: '募集人数', value: slotText(recruitment.role_slots), inline: true },
       { name: '募集主', value: `${displayName(hostProfile)} / ${hostProfile.class_name || '-'} / 戦力 ${formatNumber(hostProfile.power)} / DPS ${formatNumber(hostProfile.dps_3min)}`, inline: false },
@@ -116,6 +122,7 @@ function recruitmentEmbed(recruitment, hostProfile) {
 }
 
 module.exports = {
+  categoryLabel,
   discordAvatarUrl,
   displayName,
   formatDate,
