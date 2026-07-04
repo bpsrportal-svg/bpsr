@@ -31,6 +31,15 @@ function displayName(profile) {
   return profile.character_name || profile.discord_global_name || profile.discord_username || profile.discord_user_id;
 }
 
+function discordAvatarUrl(profile, size = 128) {
+  const avatar = profile.discord_avatar;
+  if (!avatar) return null;
+  if (String(avatar).startsWith('http://') || String(avatar).startsWith('https://')) return avatar;
+  if (!profile.discord_user_id) return null;
+  const extension = String(avatar).startsWith('a_') ? 'gif' : 'png';
+  return `https://cdn.discordapp.com/avatars/${profile.discord_user_id}/${avatar}.${extension}?size=${size}`;
+}
+
 function profileFields(profile) {
   return [
     { name: 'Discord', value: `${profile.discord_global_name || '-'} / ${profile.discord_username || '-'}`, inline: false },
@@ -65,7 +74,8 @@ function profileEmbed(profile, title = 'プロフィール') {
     .addFields(profileFields(profile))
     .addFields({ name: 'イマジン', value: imagineText(profile).slice(0, 1024), inline: false });
 
-  if (profile.discord_avatar) embed.setThumbnail(profile.discord_avatar);
+  const avatarUrl = discordAvatarUrl(profile);
+  if (avatarUrl) embed.setThumbnail(avatarUrl);
   return embed;
 }
 
@@ -100,11 +110,13 @@ function recruitmentEmbed(recruitment, hostProfile) {
   if (recruitment.status === 'closed') {
     embed.addFields({ name: '終了日時', value: formatDate(recruitment.closed_at || new Date().toISOString()), inline: false });
   }
-  if (hostProfile.discord_avatar) embed.setThumbnail(hostProfile.discord_avatar);
+  const avatarUrl = discordAvatarUrl(hostProfile);
+  if (avatarUrl) embed.setThumbnail(avatarUrl);
   return embed;
 }
 
 module.exports = {
+  discordAvatarUrl,
   displayName,
   formatDate,
   formatLimitBreak,
