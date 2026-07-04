@@ -457,6 +457,7 @@ client.on('interactionCreate', async (interaction) => {
 
 client.once('clientReady', () => {
   console.log(`Logged in as ${client.user.tag}`);
+  startBotJobWorker(client);
 });
 
 client.login(config.token);
