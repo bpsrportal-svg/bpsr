@@ -134,9 +134,10 @@ async function handleProofCreate(interaction) {
 
 
 async function handleRecruitCreateLink(interaction) {
+  await interaction.deferReply({ ephemeral: true });
   const profile = await db.getProfile(interaction.user.id);
-  if (!profile) return interaction.reply({ content: `プロフィールを先に登録してください。\n${appUrl('/profile')}`, ephemeral: true });
-  return interaction.reply({ content: `募集作成はWebで行います。\n${appUrl('/recruitments/new')}`, ephemeral: true });
+  if (!profile) return interaction.editReply({ content: `プロフィールを先に登録してください。\n${appUrl('/profile')}` });
+  return interaction.editReply({ content: `募集作成はWebで行います。\n${appUrl('/recruitments/new')}` });
 }
 async function startRecruitWizard(interaction) {
   const profile = await db.getProfile(interaction.user.id);
