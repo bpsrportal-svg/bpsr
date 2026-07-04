@@ -1,0 +1,15 @@
+[Unit]
+Description=BPSR Discord Recruitment Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/opc/bpsr
+ExecStart=/usr/bin/npm run bot:start
+Restart=always
+RestartSec=10
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

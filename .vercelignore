@@ -1,0 +1,10 @@
+.env
+.env*.local
+dev-server*.log
+.next
+node_modules
+tsconfig.tsbuildinfo
+start-server*.log
+
+dev-ui*.log
+start-ui*.log
