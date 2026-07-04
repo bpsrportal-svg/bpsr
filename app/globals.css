@@ -1284,14 +1284,16 @@ textarea:focus {
 }
 
 .application-detail-grid div,
-.application-note {
+.application-note,
+.application-imagines {
   padding: 10px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.035);
 }
 
 .application-detail-grid dt,
-.application-note span {
+.application-note span,
+.application-imagines > span {
   color: var(--muted);
   font-size: 12px;
 }
@@ -1303,10 +1305,34 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
-.application-note p {
+.application-note p,
+.application-imagines p {
   margin: 6px 0 0;
   color: var(--muted-strong);
   line-height: 1.5;
+}
+
+.application-imagine-groups {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.application-imagine-group strong {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.application-imagine-group ul {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted-strong);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .application-actions {

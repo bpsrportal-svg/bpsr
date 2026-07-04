@@ -59,5 +59,43 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: applicationsError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ recruitment, applications: applications ?? [] });
+  const applicantIds = [...new Set((applications ?? []).map((application) => application.applicant_discord_user_id).filter(Boolean))];
+  const { data: imagines, error: imaginesError } = applicantIds.length
+    ? await supabase
+      .from("user_imagines")
+      .select("discord_user_id, limit_break, imagine_masters(category, name, sort_order)")
+      .in("discord_user_id", applicantIds)
+      .gte("limit_break", 0)
+    : { data: [], error: null };
+
+  if (imaginesError) {
+    return NextResponse.json({ error: imaginesError.message }, { status: 500 });
+  }
+
+  const imaginesByUser = new Map<string, Array<{ category: string; name: string; limit_break: number; sort_order: number }>>();
+  for (const row of imagines ?? []) {
+    const master = Array.isArray(row.imagine_masters) ? row.imagine_masters[0] : row.imagine_masters;
+    if (!master) continue;
+    const list = imaginesByUser.get(row.discord_user_id) ?? [];
+    list.push({
+      category: master.category,
+      name: master.name,
+      limit_break: row.limit_break,
+      sort_order: master.sort_order ?? 0
+    });
+    imaginesByUser.set(row.discord_user_id, list);
+  }
+
+  const applicationsWithImagines = (applications ?? []).map((application) => {
+    const profile = Array.isArray(application.profiles) ? application.profiles[0] : application.profiles;
+    const userImagines = (imaginesByUser.get(application.applicant_discord_user_id) ?? [])
+      .sort((a, b) => a.sort_order - b.sort_order || a.name.localeCompare(b.name, "ja"));
+
+    return {
+      ...application,
+      profiles: profile ? { ...profile, imagines: userImagines } : profile
+    };
+  });
+
+  return NextResponse.json({ recruitment, applications: applicationsWithImagines });
 }

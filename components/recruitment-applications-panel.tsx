@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 
+const IMAGINE_CATEGORY_ORDER = ["S1", "S2", "S3", "EVENT"] as const;
+
 type ApplicationProfile = {
   character_name?: string | null;
   uid?: string | null;
@@ -13,6 +15,7 @@ type ApplicationProfile = {
   discord_global_name?: string | null;
   discord_username?: string | null;
   profile_updated_at?: string | null;
+  imagines?: Array<{ category: string; name: string; limit_break: number }>;
 };
 
 type ApplicationRow = {
@@ -58,6 +61,26 @@ function statusLabel(status: string) {
   if (status === "approved") return "承認済み";
   if (status === "rejected") return "却下済み";
   return "未処理";
+}
+
+function imagineCategoryLabel(category: string) {
+  return category === "EVENT" ? "イベント" : category;
+}
+
+function groupedImagines(profile?: ApplicationProfile | null) {
+  const grouped: Record<string, Array<{ name: string; limit_break: number }>> = {
+    S1: [],
+    S2: [],
+    S3: [],
+    EVENT: []
+  };
+
+  for (const imagine of profile?.imagines ?? []) {
+    if (!grouped[imagine.category]) continue;
+    grouped[imagine.category].push({ name: imagine.name, limit_break: imagine.limit_break });
+  }
+
+  return grouped;
 }
 
 export function RecruitmentApplicationsPanel({ recruitmentId }: { recruitmentId: string }) {
@@ -145,6 +168,31 @@ export function RecruitmentApplicationsPanel({ recruitmentId }: { recruitmentId:
                   <div className="application-note">
                     <span>申請コメント</span>
                     <p>{application.message || "コメントなし"}</p>
+                  </div>
+
+                  <div className="application-imagines">
+                    <span>所持イマジン</span>
+                    {profile?.imagines?.length ? (
+                      <div className="application-imagine-groups">
+                        {IMAGINE_CATEGORY_ORDER.map((category) => {
+                          const imagines = groupedImagines(profile)[category];
+                          if (!imagines.length) return null;
+
+                          return (
+                            <div className="application-imagine-group" key={category}>
+                              <strong>{imagineCategoryLabel(category)}</strong>
+                              <ul>
+                                {imagines.map((imagine) => (
+                                  <li key={`${category}-${imagine.name}`}>{imagine.name}: {imagine.limit_break}凸</li>
+                                ))}
+                              </ul>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p>所持イマジンなし</p>
+                    )}
                   </div>
 
                   {application.status === "pending" ? (
