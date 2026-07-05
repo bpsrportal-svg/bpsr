@@ -2,7 +2,7 @@
 
 import { type FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, CheckCircle2, Headphones, Info, Send } from "lucide-react";
+import { Headphones, Info, Send } from "lucide-react";
 
 type ContentMaster = { id: number; category: string; name: string };
 type ModeMaster = { id: number; content_id: number; name: string };
@@ -49,7 +49,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
   const [tank, setTank] = useState(1);
   const [healer, setHealer] = useState(1);
   const [requiredClassText, setRequiredClassText] = useState("");
-  const [message, setMessage] = useState("募集DB SQL実行後に保存できます。");
+  const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   const filteredModes = useMemo(() => modeOptions.filter((mode) => mode.content_id === contentId), [contentId, modeOptions]);
@@ -124,7 +124,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
   }
 
   return (
-    <section className="create-layout">
+    <section className="create-layout single-column">
       <form className="create-form" onSubmit={handleSubmit}>
         <section className="form-section portal-form-section">
           <div className="panel-title-row">
@@ -194,31 +194,15 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
           </div>
         </section>
 
-        <div className="save-bar portal-save-bar">
-          <p className={message.includes("できません") ? "message error" : "message"}>{message}</p>
+        <div className="save-bar portal-save-bar action-only">
+          {message ? <p className="message">{message}</p> : null}
           <button className="button primary" type="submit" disabled={isSaving}>
             <Send size={17} aria-hidden="true" />
-            募集を開始
+            募集開始
           </button>
         </div>
       </form>
 
-      <aside className="side-column">
-        <section className="compact-panel">
-          <div className="panel-title-row">
-            <Bell size={18} aria-hidden="true" />
-            <h2>Discord通知</h2>
-          </div>
-          <p>募集開始後、Botが指定チャンネルへ通知を投稿し、詳細ページへ誘導します。</p>
-        </section>
-        <section className="compact-panel">
-          <div className="panel-title-row">
-            <CheckCircle2 size={18} aria-hidden="true" />
-            <h2>募集〆後の動き</h2>
-          </div>
-          <p>人数が揃うと募集主と参加者へBotがDM通知します。</p>
-        </section>
-      </aside>
     </section>
   );
 }

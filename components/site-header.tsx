@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signIn, signOut } from "@/auth";
-import { CircleUserRound, LogIn, LogOut, Plus, Search, ShieldCheck, UsersRound } from "lucide-react";
+import { CircleUserRound, LogIn, LogOut, Plus, Search, ShieldCheck } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
@@ -22,21 +23,18 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
           <Plus size={17} aria-hidden="true" />
           作成
         </Link>
-        <Link href="/players">
-          <UsersRound size={17} aria-hidden="true" />
-          プレイヤー
-        </Link>
         <Link href="/profile">
           <CircleUserRound size={17} aria-hidden="true" />
           マイページ
         </Link>
-        <Link href="/admin/users">
+        <Link href="/admin">
           <ShieldCheck size={17} aria-hidden="true" />
           管理
         </Link>
       </nav>
 
       <div className="auth-actions">
+        <ThemeToggle />
         {isLoggedIn ? (
           <form
             action={async () => {
@@ -52,7 +50,7 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
           <form
             action={async () => {
               "use server";
-              await signIn("discord", { redirectTo: "/profile" });
+              await signIn("discord", { redirectTo: "/" });
             }}
           >
             <button className="button primary compact" type="submit">

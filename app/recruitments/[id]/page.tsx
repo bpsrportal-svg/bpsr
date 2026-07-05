@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Bell, CheckCircle2, Headphones, Send, Shield, Swords, UserRoundCheck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Send, Shield, Swords, UserRoundCheck } from "lucide-react";
 import { auth } from "@/auth";
 import { RecruitmentApplicationsPanel } from "@/components/recruitment-applications-panel";
 import { RecruitmentApplyPanel } from "@/components/recruitment-apply-panel";
@@ -28,9 +28,7 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
             <ArrowLeft size={16} aria-hidden="true" />
             募集一覧へ戻る
           </Link>
-          <p className="eyebrow">Recruitment Detail</p>
           <h1>{recruitment.title}</h1>
-          <p className="lead">申請、承認、募集〆までをこの詳細ページに集約します。</p>
         </div>
         <button className="button primary" type="button" disabled>
           <Send size={17} aria-hidden="true" />
@@ -72,22 +70,6 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
         <aside className="side-column">
           <RecruitmentApplyPanel recruitmentId={recruitment.id} disabled={recruitment.status !== "open"} />
           <RecruitmentApplicationsPanel recruitmentId={recruitment.id} />
-
-          <section className="compact-panel">
-            <div className="panel-title-row">
-              <Bell size={18} aria-hidden="true" />
-              <h2>Discord通知</h2>
-            </div>
-            <p>この募集が保存されると、BotがDiscordへ通知し、Web詳細URLへ誘導します。</p>
-          </section>
-
-          <section className="compact-panel">
-            <div className="panel-title-row">
-              <Headphones size={18} aria-hidden="true" />
-              <h2>募集〆通知</h2>
-            </div>
-            <p>承認人数が揃った時点で、Botが募集主と参加者へDM通知します。</p>
-          </section>
 
           <section className="compact-panel">
             <h2>募集主プロフィール</h2>
