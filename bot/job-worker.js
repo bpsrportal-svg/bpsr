@@ -1,5 +1,5 @@
 const db = require('./db');
-const { botConfig } = require('./config');
+const { botConfig, ROLE_LABELS } = require('./config');
 const { recruitmentEmbed } = require('./render');
 
 const POLL_INTERVAL_MS = Number(process.env.BOT_JOB_POLL_INTERVAL_MS || 15000);
@@ -72,6 +72,10 @@ async function handleRecruitmentNotify(client, job) {
   await db.updateRecruitmentDiscordNotification(recruitment.id, channel.id, message.id);
 }
 
+function roleLabel(role) {
+  return ROLE_LABELS[role] || role;
+}
+
 function formatApplicantLine(profile) {
   const name = profile.character_name || profile.discord_global_name || profile.discord_username || profile.discord_user_id;
   const className = profile.class_name || '-';
@@ -106,7 +110,7 @@ async function handleApplicationNotify(client, job) {
     '募集に申請が来ました。',
     `募集: ${recruitment.title}`,
     `申請者: ${formatApplicantLine(applicant)}`,
-    `申請ロール: ${application.requested_role}`,
+    `申請ロール: ${roleLabel(application.requested_role)}`,
     application.message ? `コメント: ${application.message}` : null,
     `詳細: ${publicRecruitmentUrl(recruitment.id)}`,
   ].filter(Boolean).join('\n'));
@@ -162,7 +166,7 @@ async function handlePartyReadyNotify(client, job) {
 
   const detailUrl = publicRecruitmentUrl(recruitment.id);
   const participantLines = memberProfiles.length
-    ? memberProfiles.map(({ application, profile }) => `- ${application.requested_role}: ${profileSummary(profile)}`).join('\n')
+    ? memberProfiles.map(({ application, profile }) => `- ${roleLabel(application.requested_role)}: ${profileSummary(profile)}`).join('\n')
     : '- 承認済み参加者なし';
 
   const results = [];
@@ -179,7 +183,7 @@ async function handlePartyReadyNotify(client, job) {
       '参加が確定しました。',
       `募集: ${recruitment.title}`,
       `募集主: ${profileSummary(host)}`,
-      `あなたのロール: ${application.requested_role}`,
+      `あなたのロール: ${roleLabel(application.requested_role)}`,
       `詳細: ${detailUrl}`,
     ].join('\n')));
   }
