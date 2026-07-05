@@ -1902,3 +1902,256 @@ html[data-theme="light"] .button.secondary.small:hover {
   background: #f0f9ff;
   color: #075985;
 }
+
+/* Top page simplification and logo assets */
+.brand-symbol {
+  overflow: hidden;
+  background: color-mix(in srgb, var(--panel) 76%, transparent);
+  border-color: rgba(148, 163, 184, 0.3);
+  color: inherit;
+}
+
+.brand-symbol img {
+  width: 30px;
+  height: 30px;
+  display: block;
+  object-fit: contain;
+}
+
+.portal-hero-simple {
+  display: block;
+}
+
+.brand-hero {
+  min-height: 286px;
+  align-content: center;
+  justify-items: center;
+  gap: 22px;
+  padding: clamp(24px, 4vw, 44px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.1), transparent 28rem),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.14), rgba(2, 6, 23, 0.58)),
+    #020617;
+}
+
+.hero-brand-logo {
+  width: min(720px, 88%);
+  max-height: 220px;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.42));
+}
+
+.hero-command-row {
+  width: min(720px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hero-status-chip {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 14px;
+  border: 1px solid rgba(34, 197, 94, 0.42);
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #dcfce7;
+  font-weight: 700;
+}
+
+.hero-status-chip strong {
+  color: #ffffff;
+  font-family: "Fira Code", monospace;
+}
+
+.compact-actions {
+  margin-top: 0;
+}
+
+html[data-theme="light"] .brand-hero {
+  border-color: rgba(15, 23, 42, 0.16);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.12), transparent 28rem),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.04), rgba(2, 6, 23, 0.44)),
+    #020617;
+}
+
+html[data-theme="light"] .filter-chip {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .filter-chip:hover {
+  border-color: #16a34a;
+  background: #ecfdf5;
+  color: #14532d;
+}
+
+html[data-theme="light"] .filter-chip.active {
+  border-color: #22c55e;
+  background: #dcfce7;
+  color: #14532d;
+}
+
+@media (max-width: 760px) {
+  .brand-hero {
+    min-height: 230px;
+    padding: 22px 16px;
+  }
+
+  .hero-brand-logo {
+    width: min(100%, 540px);
+  }
+
+  .hero-command-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-status-chip {
+    justify-content: space-between;
+  }
+
+  .compact-actions {
+    width: 100%;
+  }
+}
+
+
+/* Home hero tuned to the provided layout reference */
+.brand-hero {
+  min-height: 340px;
+  justify-items: stretch;
+  align-content: end;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 48px) 0 0;
+  border-color: rgba(148, 163, 184, 0.18);
+  background: #020617;
+}
+
+.hero-brand-logo {
+  width: min(760px, 88vw);
+  max-height: none;
+  margin-left: clamp(0px, 2vw, 24px);
+  object-fit: contain;
+  object-position: left center;
+  filter: none;
+}
+
+.hero-command-row {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 0 0 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+}
+
+.hero-status-chip {
+  min-height: 56px;
+  min-width: 92px;
+  justify-content: space-between;
+  border-color: rgba(34, 197, 94, 0.42);
+  border-radius: 6px;
+  background: rgba(6, 78, 59, 0.42);
+  color: #ecfdf5;
+}
+
+.hero-status-chip strong {
+  color: #ffffff;
+}
+
+.compact-actions {
+  height: 56px;
+  align-items: stretch;
+  gap: 0;
+}
+
+.compact-actions .button {
+  min-height: 56px;
+  border-radius: 0;
+  padding-inline: 20px;
+}
+
+.compact-actions .button.primary {
+  border-color: #22c55e;
+}
+
+.compact-actions .button.secondary {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .brand-hero {
+  background: #020617;
+}
+
+html[data-theme="light"] .hero-command-row {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+}
+
+@media (max-width: 760px) {
+  .brand-hero {
+    min-height: 276px;
+    padding-top: 24px;
+  }
+
+  .hero-brand-logo {
+    width: min(680px, 96vw);
+    margin-left: 0;
+  }
+
+  .hero-command-row {
+    flex-direction: row;
+    align-items: stretch;
+    padding-left: 6px;
+  }
+
+  .hero-status-chip {
+    min-width: 88px;
+  }
+
+  .compact-actions {
+    width: auto;
+    margin-left: auto;
+  }
+
+  .compact-actions .button {
+    width: auto;
+    padding-inline: 14px;
+  }
+}
+
+
+/* Make the top logo more dominant per latest direction */
+.brand-hero {
+  min-height: 420px;
+  padding-top: clamp(8px, 1.4vw, 18px);
+}
+
+.hero-brand-logo {
+  width: min(1120px, 106vw);
+  margin-left: -16px;
+}
+
+.hero-command-row {
+  margin-top: -8px;
+}
+
+@media (max-width: 760px) {
+  .brand-hero {
+    min-height: 330px;
+    padding-top: 8px;
+  }
+
+  .hero-brand-logo {
+    width: 112vw;
+    margin-left: -16px;
+  }
+}

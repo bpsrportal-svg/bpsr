@@ -1,5 +1,5 @@
-﻿import Link from "next/link";
-import { ArrowRight, Filter, Search } from "lucide-react";
+import Link from "next/link";
+import { Filter, Plus, Search } from "lucide-react";
 import { auth } from "@/auth";
 import { RecruitmentCard } from "@/components/recruitment-card";
 import { SiteHeader } from "@/components/site-header";
@@ -7,6 +7,18 @@ import { getRecruitmentsForPage } from "@/lib/recruitment-queries";
 
 type HomeProps = {
   searchParams?: Promise<{ content?: string }>;
+};
+
+const labels = {
+  hero: "BPSRPortal",
+  recruitmentStatus: "\u52df\u96c6\u4e2d",
+  recruitments: "\u52df\u96c6",
+  create: "\u4f5c\u6210",
+  filter: "\u30b3\u30f3\u30c6\u30f3\u30c4\u540d\u30d5\u30a3\u30eb\u30bf\u30fc",
+  all: "\u3059\u3079\u3066",
+  active: "Active Recruitment",
+  recommended: "\u304a\u3059\u3059\u3081\u52df\u96c6",
+  viewAll: "\u4e00\u89a7\u3092\u898b\u308b"
 };
 
 export default async function Home({ searchParams }: HomeProps) {
@@ -24,27 +36,22 @@ export default async function Home({ searchParams }: HomeProps) {
     <main className="app-shell">
       <SiteHeader isLoggedIn={Boolean(session?.user?.id)} />
 
-      <section className="portal-hero">
-        <div className="hero-copy">
-          <p className="eyebrow">BPSRPortal</p>
-          <h1>募集を探す時間を減らし、遊ぶ時間を増やす。</h1>
-          <p className="lead">Discordと連携したゲームコミュニティポータルです。募集の検索、作成、申請、承認をWeb中心で扱い、通知だけをDiscordへつなぎます。</p>
-          <div className="hero-actions">
-            <Link className="button primary" href="/recruitments"><Search size={18} aria-hidden="true" />募集を探す</Link>
-            <Link className="button secondary" href="/recruitments/new">募集を作成<ArrowRight size={18} aria-hidden="true" /></Link>
+      <section className="portal-hero portal-hero-simple" aria-label={labels.hero}>
+        <div className="hero-copy brand-hero">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="hero-brand-logo" src="/star-resonance-mark.png" alt="BLUE PROTOCOL STAR RESONANCE" />
+          <div className="hero-command-row">
+            <span className="hero-status-chip"><span>{labels.recruitmentStatus}</span><strong>{openRecruitments.length}</strong></span>
+            <div className="hero-actions compact-actions">
+              <Link className="button primary" href="/recruitments"><Search size={18} aria-hidden="true" />{labels.recruitments}</Link>
+              <Link className="button secondary" href="/recruitments/new"><Plus size={18} aria-hidden="true" />{labels.create}</Link>
+            </div>
           </div>
         </div>
-
-        <aside className="ops-panel" aria-label="募集状況">
-          <div className="ops-row strong">
-            <span>募集中</span>
-            <strong>{openRecruitments.length}</strong>
-          </div>
-        </aside>
       </section>
 
-      <section className="quick-filter-band" aria-label="コンテンツ名フィルター">
-        <Link className={!selectedContent ? "filter-chip active" : "filter-chip"} href="/"><Filter size={15} aria-hidden="true" />すべて</Link>
+      <section className="quick-filter-band" aria-label={labels.filter}>
+        <Link className={!selectedContent ? "filter-chip active" : "filter-chip"} href="/"><Filter size={15} aria-hidden="true" />{labels.all}</Link>
         {contentNames.map((name) => (
           <Link className={selectedContent === name ? "filter-chip active" : "filter-chip"} href={"/?content=" + encodeURIComponent(name)} key={name}>{name}</Link>
         ))}
@@ -54,10 +61,10 @@ export default async function Home({ searchParams }: HomeProps) {
         <div className="main-column">
           <div className="section-heading compact-heading">
             <div>
-              <p className="eyebrow">Active Recruitment</p>
-              <h2>おすすめ募集</h2>
+              <p className="eyebrow">{labels.active}</p>
+              <h2>{labels.recommended}</h2>
             </div>
-            <Link className="text-link" href="/recruitments">一覧を見る</Link>
+            <Link className="text-link" href="/recruitments">{labels.viewAll}</Link>
           </div>
           <div className="recruitment-list">
             {visibleRecruitments.map((recruitment) => <RecruitmentCard key={recruitment.id} recruitment={recruitment} />)}
