@@ -214,7 +214,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
         <section className="compact-panel">
           <div className="panel-title-row">
             <CheckCircle2 size={18} aria-hidden="true" />
-            <h2>参加確定後の動き</h2>
+            <h2>募集〆後の動き</h2>
           </div>
           <p>人数が揃うと募集主と参加者へBotがDM通知します。</p>
         </section>

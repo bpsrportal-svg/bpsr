@@ -33,7 +33,7 @@ export default async function RecruitmentsPage() {
         </label>
         <select aria-label="状態">
           <option>募集中</option>
-          <option>参加確定</option>
+          <option>募集〆</option>
           <option>すべて</option>
         </select>
         <select aria-label="VC">
