@@ -1,7 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
+import { formatLimitBreak, formatSeaWeaponLevel } from "@/lib/authz";
+import { getRoleLabel } from "@/lib/constants";
 
 const IMAGINE_CATEGORY_ORDER = ["S1", "S2", "S3", "EVENT"] as const;
 
@@ -41,20 +43,9 @@ function formatNumber(value?: number | null) {
   return Number(value).toLocaleString("ja-JP");
 }
 
-function formatSeaWeapon(value?: number | null) {
-  if (value === null || value === undefined) return "-";
-  return `Lv.${value}`;
-}
-
 function formatDate(value?: string | null) {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
 function statusLabel(status: string) {
@@ -68,18 +59,11 @@ function imagineCategoryLabel(category: string) {
 }
 
 function groupedImagines(profile?: ApplicationProfile | null) {
-  const grouped: Record<string, Array<{ name: string; limit_break: number }>> = {
-    S1: [],
-    S2: [],
-    S3: [],
-    EVENT: []
-  };
-
+  const grouped: Record<string, Array<{ name: string; limit_break: number }>> = { S1: [], S2: [], S3: [], EVENT: [] };
   for (const imagine of profile?.imagines ?? []) {
     if (!grouped[imagine.category]) continue;
     grouped[imagine.category].push({ name: imagine.name, limit_break: imagine.limit_break });
   }
-
   return grouped;
 }
 
@@ -137,12 +121,7 @@ export function RecruitmentApplicationsPanel({ recruitmentId }: { recruitmentId:
           return (
             <article className={isOpen ? "application-card open" : "application-card"} key={application.id}>
               <div className="application-summary">
-                <button
-                  className="application-name-button"
-                  type="button"
-                  onClick={() => setOpenApplicationId(isOpen ? null : application.id)}
-                  aria-expanded={isOpen}
-                >
+                <button className="application-name-button" type="button" onClick={() => setOpenApplicationId(isOpen ? null : application.id)} aria-expanded={isOpen}>
                   <strong>{name}</strong>
                   <span className={`status-pill ${application.status === "pending" ? "open" : "in_progress"}`}>{statusLabel(application.status)}</span>
                 </button>
@@ -155,20 +134,17 @@ export function RecruitmentApplicationsPanel({ recruitmentId }: { recruitmentId:
               {isOpen ? (
                 <div className="application-detail">
                   <dl className="application-detail-grid">
-                    <div><dt>申請ロール</dt><dd>{application.requested_role}</dd></div>
+                    <div><dt>申請ロール</dt><dd>{getRoleLabel(application.requested_role)}</dd></div>
                     <div><dt>クラス</dt><dd>{profile?.class_name || "-"}</dd></div>
                     <div><dt>戦力</dt><dd>{formatNumber(profile?.power)}</dd></div>
                     <div><dt>3分合計DPS</dt><dd>{formatNumber(profile?.dps_3min)}</dd></div>
                     <div><dt>UID</dt><dd>{profile?.uid || "-"}</dd></div>
-                    <div><dt>海武器</dt><dd>{formatSeaWeapon(profile?.sea_weapon_level)}</dd></div>
+                    <div><dt>海武器</dt><dd>{formatSeaWeaponLevel(profile?.sea_weapon_level ?? null)}</dd></div>
                     <div><dt>Discord</dt><dd>{profile?.discord_global_name || profile?.discord_username || "-"}</dd></div>
                     <div><dt>申請日時</dt><dd>{formatDate(application.created_at)}</dd></div>
                   </dl>
 
-                  <div className="application-note">
-                    <span>申請コメント</span>
-                    <p>{application.message || "コメントなし"}</p>
-                  </div>
+                  <div className="application-note"><span>申請コメント</span><p>{application.message || "コメントなし"}</p></div>
 
                   <div className="application-imagines">
                     <span>所持イマジン</span>
@@ -177,34 +153,21 @@ export function RecruitmentApplicationsPanel({ recruitmentId }: { recruitmentId:
                         {IMAGINE_CATEGORY_ORDER.map((category) => {
                           const imagines = groupedImagines(profile)[category];
                           if (!imagines.length) return null;
-
                           return (
                             <div className="application-imagine-group" key={category}>
                               <strong>{imagineCategoryLabel(category)}</strong>
-                              <ul>
-                                {imagines.map((imagine) => (
-                                  <li key={`${category}-${imagine.name}`}>{imagine.name}: {imagine.limit_break}凸</li>
-                                ))}
-                              </ul>
+                              <ul>{imagines.map((imagine) => <li key={`${category}-${imagine.name}`}>{imagine.name}: {formatLimitBreak(imagine.limit_break)}</li>)}</ul>
                             </div>
                           );
                         })}
                       </div>
-                    ) : (
-                      <p>所持イマジンなし</p>
-                    )}
+                    ) : <p>所持イマジンなし</p>}
                   </div>
 
                   {application.status === "pending" ? (
                     <div className="application-actions">
-                      <button className="button primary compact" type="button" onClick={() => review(application.id, "approve")}>
-                        <Check size={17} aria-hidden="true" />
-                        承認
-                      </button>
-                      <button className="button secondary compact" type="button" onClick={() => review(application.id, "reject")}>
-                        <X size={17} aria-hidden="true" />
-                        却下
-                      </button>
+                      <button className="button primary compact" type="button" onClick={() => review(application.id, "approve")}><Check size={17} aria-hidden="true" />承認</button>
+                      <button className="button secondary compact" type="button" onClick={() => review(application.id, "reject")}><X size={17} aria-hidden="true" />却下</button>
                     </div>
                   ) : null}
                 </div>

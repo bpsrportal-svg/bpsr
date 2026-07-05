@@ -1,4 +1,4 @@
-export type RecruitmentStatus = "open" | "in_progress" | "closed";
+﻿export type RecruitmentStatus = "open" | "in_progress" | "closed";
 
 export type Recruitment = {
   id: string;
@@ -39,7 +39,7 @@ export const recruitments: Recruitment[] = [
     title: "衰亡の深淵 装備周回 5周予定",
     content: "衰亡の深淵",
     mode: "装備周回",
-    condition: "戦力110,000以上。初見可、道中安定重視。",
+    condition: "戦力10,000以上。初見可、安定重視。",
     vc: "あり",
     status: "open",
     updatedAt: "3分前",
@@ -71,41 +71,14 @@ export const recruitments: Recruitment[] = [
     updatedAt: "28分前",
     host: { name: "BPSR隊員", className: "狂音", power: 132400 },
     slots: { dps: [3, 3], tank: [1, 1], healer: [1, 1] },
-    tags: ["編成中", "スコア"]
+    tags: ["募集〆", "スコア"]
   }
 ];
 
 export const players: Player[] = [
-  {
-    id: "p-001",
-    name: "もろびと",
-    uid: "123456789",
-    className: "狼弓",
-    power: 128000,
-    dps: 52000000,
-    good: 24,
-    comment: "周回と高難度どちらも参加します。"
-  },
-  {
-    id: "p-002",
-    name: "管理人",
-    uid: "151295707",
-    className: "光盾",
-    power: 121500,
-    dps: 31000000,
-    good: 18,
-    comment: "安定進行重視。VC対応できます。"
-  },
-  {
-    id: "p-003",
-    name: "BPSR隊員",
-    uid: "998877665",
-    className: "狂音",
-    power: 132400,
-    dps: 61000000,
-    good: 31,
-    comment: "DPS/ヒーラーどちらでも申請可能です。"
-  }
+  { id: "p-001", name: "もろびと", uid: "123456789", className: "狼弓", power: 128000, dps: 52000000, good: 24, comment: "周回と高難度どちらも参加します。" },
+  { id: "p-002", name: "管理人", uid: "151295707", className: "光盾", power: 121500, dps: 31000000, good: 18, comment: "安定進行重視。VC対応できます。" },
+  { id: "p-003", name: "BPSR隊員", uid: "998877665", className: "狂音", power: 132400, dps: 61000000, good: 31, comment: "DPS/ヒーラーどちらでも申請可能です。" }
 ];
 
 export const contentFilters = ["すべて", "衰亡の深淵", "ロックスネークの巣", "幻花の残骸", "レイド", "スコアアタック"];

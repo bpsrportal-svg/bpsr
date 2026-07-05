@@ -23,7 +23,7 @@ export async function GET() {
   const [{ data: profile, error: profileError }, { data: masters, error: mastersError }, { data: userImagines, error: userImaginesError }] =
     await Promise.all([
       supabase.from("profiles").select("*").eq("discord_user_id", discordUserId).maybeSingle(),
-      supabase.from("imagine_masters").select("*").order("category").order("sort_order").order("name"),
+      supabase.from("imagine_masters").select("id, category, name, sort_order, icon_url, is_active").eq("is_active", true).order("category").order("sort_order").order("name"),
       supabase.from("user_imagines").select("imagine_id, limit_break, updated_at").eq("discord_user_id", discordUserId)
     ]);
 
@@ -128,3 +128,4 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, profileUpdatedAt: now });
 }
+

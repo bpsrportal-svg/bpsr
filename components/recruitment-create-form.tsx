@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { type FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Headphones, Info, Send } from "lucide-react";
+import { getRoleLabel, vcModes } from "@/lib/constants";
 
 type ContentMaster = { id: number; category: string; name: string };
 type ModeMaster = { id: number; content_id: number; name: string };
@@ -44,7 +45,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
   const [modeId, setModeId] = useState(0);
   const [title, setTitle] = useState("");
   const [conditions, setConditions] = useState("");
-  const [vcMode, setVcMode] = useState<"なし" | "あり" | "あり（プライベート）">("なし");
+  const [vcMode, setVcMode] = useState<(typeof vcModes)[number]>("なし");
   const [dps, setDps] = useState(3);
   const [tank, setTank] = useState(1);
   const [healer, setHealer] = useState(1);
@@ -54,6 +55,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
 
   const filteredModes = useMemo(() => modeOptions.filter((mode) => mode.content_id === contentId), [contentId, modeOptions]);
   const selectedModeId = modeId || filteredModes[0]?.id || 0;
+  const classPlaceholder = classOptions.slice(0, 4).map((item) => item.name).join(", ");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -135,9 +137,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
             <label>
               コンテンツ
               <select value={contentId} onChange={(event) => { setContentId(Number(event.target.value)); setModeId(0); }}>
-                {contentOptions.map((content) => (
-                  <option value={content.id} key={content.id}>{content.category} / {content.name}</option>
-                ))}
+                {contentOptions.map((content) => <option value={content.id} key={content.id}>{content.category} / {content.name}</option>)}
               </select>
             </label>
             <label>
@@ -152,7 +152,7 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
             </label>
             <label className="span-2">
               条件
-              <textarea value={conditions} onChange={(event) => setConditions(event.target.value)} placeholder="例: 戦力110,000以上。初見可、安定重視。" />
+              <textarea value={conditions} onChange={(event) => setConditions(event.target.value)} placeholder="例: 戦力10,000以上。初見可、安定重視。" />
             </label>
           </div>
         </section>
@@ -166,43 +166,27 @@ export function RecruitmentCreateForm({ contents, modes, classes }: RecruitmentC
             <label>
               VC
               <select value={vcMode} onChange={(event) => setVcMode(event.target.value as typeof vcMode)}>
-                <option>なし</option>
-                <option>あり</option>
-                <option>あり（プライベート）</option>
+                {vcModes.map((mode) => <option key={mode}>{mode}</option>)}
               </select>
             </label>
-            <label>
-              DPS
-              <input type="number" min="0" value={dps} onChange={(event) => setDps(Number(event.target.value))} />
-            </label>
-            <label>
-              タンク
-              <input type="number" min="0" value={tank} onChange={(event) => setTank(Number(event.target.value))} />
-            </label>
-            <label>
-              ヒーラー
-              <input type="number" min="0" value={healer} onChange={(event) => setHealer(Number(event.target.value))} />
-            </label>
+            <label>DPS<input type="number" min="0" value={dps} onChange={(event) => setDps(Number(event.target.value))} /></label>
+            <label>{getRoleLabel("TANK")}<input type="number" min="0" value={tank} onChange={(event) => setTank(Number(event.target.value))} /></label>
+            <label>{getRoleLabel("HEALER")}<input type="number" min="0" value={healer} onChange={(event) => setHealer(Number(event.target.value))} /></label>
             <label className="span-2">
               必要クラス
-              <input
-                value={requiredClassText}
-                onChange={(event) => setRequiredClassText(event.target.value)}
-                placeholder={`例: ${classOptions.slice(0, 4).map((item) => item.name).join(", ")}`}
-              />
+              <input value={requiredClassText} onChange={(event) => setRequiredClassText(event.target.value)} placeholder={`例: ${classPlaceholder}`} />
             </label>
           </div>
         </section>
 
         <div className="save-bar portal-save-bar action-only">
-          {message ? <p className="message">{message}</p> : null}
+          {message ? <p className={message.includes("できません") ? "message error" : "message"}>{message}</p> : null}
           <button className="button primary" type="submit" disabled={isSaving}>
             <Send size={17} aria-hidden="true" />
             募集開始
           </button>
         </div>
       </form>
-
     </section>
   );
 }

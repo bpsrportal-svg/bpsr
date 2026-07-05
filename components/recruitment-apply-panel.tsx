@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Send } from "lucide-react";
+import { getRoleLabel } from "@/lib/constants";
 
 type ApplyPanelProps = {
   recruitmentId: string;
@@ -43,8 +44,8 @@ export function RecruitmentApplyPanel({ recruitmentId, disabled }: ApplyPanelPro
         申請ロール
         <select value={requestedRole} onChange={(event) => setRequestedRole(event.target.value as typeof requestedRole)} disabled={disabled || isSubmitting}>
           <option value="DPS">DPS</option>
-          <option value="TANK">タンク</option>
-          <option value="HEALER">ヒーラー</option>
+          <option value="TANK">{getRoleLabel("TANK")}</option>
+          <option value="HEALER">{getRoleLabel("HEALER")}</option>
         </select>
       </label>
       <label>

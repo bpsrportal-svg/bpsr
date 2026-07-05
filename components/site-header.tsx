@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { signIn, signOut } from "@/auth";
 import { CircleUserRound, LogIn, LogOut, Plus, Search, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -15,48 +15,21 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
       </Link>
 
       <nav className="site-nav" aria-label="メインナビゲーション">
-        <Link href="/recruitments">
-          <Search size={17} aria-hidden="true" />
-          募集
-        </Link>
-        <Link href="/recruitments/new">
-          <Plus size={17} aria-hidden="true" />
-          作成
-        </Link>
-        <Link href="/profile">
-          <CircleUserRound size={17} aria-hidden="true" />
-          マイページ
-        </Link>
-        <Link href="/admin">
-          <ShieldCheck size={17} aria-hidden="true" />
-          管理
-        </Link>
+        <Link href="/recruitments"><Search size={17} aria-hidden="true" />募集</Link>
+        <Link href="/recruitments/new"><Plus size={17} aria-hidden="true" />作成</Link>
+        <Link href="/profile"><CircleUserRound size={17} aria-hidden="true" />マイページ</Link>
+        <Link href="/admin"><ShieldCheck size={17} aria-hidden="true" />管理</Link>
       </nav>
 
       <div className="auth-actions">
         <ThemeToggle />
         {isLoggedIn ? (
-          <form
-            action={async () => {
-              "use server";
-              await signOut();
-            }}
-          >
-            <button className="icon-button" type="submit" aria-label="ログアウト">
-              <LogOut size={18} aria-hidden="true" />
-            </button>
+          <form action={async () => { "use server"; await signOut(); }}>
+            <button className="icon-button" type="submit" aria-label="ログアウト"><LogOut size={18} aria-hidden="true" /></button>
           </form>
         ) : (
-          <form
-            action={async () => {
-              "use server";
-              await signIn("discord", { redirectTo: "/" });
-            }}
-          >
-            <button className="button primary compact" type="submit">
-              <LogIn size={17} aria-hidden="true" />
-              Discordログイン
-            </button>
+          <form action={async () => { "use server"; await signIn("discord", { redirectTo: "/" }); }}>
+            <button className="button primary compact" type="submit"><LogIn size={17} aria-hidden="true" />Discordログイン</button>
           </form>
         )}
       </div>

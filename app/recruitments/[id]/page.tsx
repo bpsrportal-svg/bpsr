@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Send, Shield, Swords, UserRoundCheck } from "lucide-react";
 import { auth } from "@/auth";
@@ -24,16 +24,10 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
 
       <section className="page-title-band detail-title-band">
         <div>
-          <Link className="text-link back-link" href="/recruitments">
-            <ArrowLeft size={16} aria-hidden="true" />
-            募集一覧へ戻る
-          </Link>
+          <Link className="text-link back-link" href="/recruitments"><ArrowLeft size={16} aria-hidden="true" />募集一覧へ戻る</Link>
           <h1>{recruitment.title}</h1>
         </div>
-        <button className="button primary" type="button" disabled>
-          <Send size={17} aria-hidden="true" />
-          申請する
-        </button>
+        <button className="button primary" type="button" disabled><Send size={17} aria-hidden="true" />申請は右側から</button>
       </section>
 
       <section className="detail-layout">
@@ -41,10 +35,7 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
           <RecruitmentCard recruitment={recruitment} />
 
           <section className="compact-panel detail-panel">
-            <div className="panel-title-row">
-              <CheckCircle2 size={18} aria-hidden="true" />
-              <h2>募集条件</h2>
-            </div>
+            <div className="panel-title-row"><CheckCircle2 size={18} aria-hidden="true" /><h2>募集条件</h2></div>
             <dl className="detail-definition-grid">
               <div><dt>コンテンツ</dt><dd>{recruitment.content}</dd></div>
               <div><dt>モード</dt><dd>{recruitment.mode}</dd></div>
@@ -55,10 +46,7 @@ export default async function RecruitmentDetailPage({ params }: { params: Promis
           </section>
 
           <section className="compact-panel detail-panel">
-            <div className="panel-title-row">
-              <Swords size={18} aria-hidden="true" />
-              <h2>ロール枠</h2>
-            </div>
+            <div className="panel-title-row"><Swords size={18} aria-hidden="true" /><h2>ロール枠</h2></div>
             <div className="slot-grid detail-slots">
               <span><Swords size={15} aria-hidden="true" />DPS {recruitment.slots.dps[0]}/{recruitment.slots.dps[1]}</span>
               <span><Shield size={15} aria-hidden="true" />タンク {recruitment.slots.tank[0]}/{recruitment.slots.tank[1]}</span>

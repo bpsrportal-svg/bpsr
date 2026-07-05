@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Clock3, Headphones, Shield, Swords, UserRoundCheck } from "lucide-react";
 import type { Recruitment } from "@/lib/portal-sample-data";
 
@@ -17,10 +17,7 @@ export function RecruitmentCard({ recruitment }: { recruitment: Recruitment }) {
     <article className="recruitment-card">
       <div className="card-topline">
         <span className={`status-pill ${recruitment.status}`}>{statusLabel(recruitment.status)}</span>
-        <span className="muted-inline">
-          <Clock3 size={15} aria-hidden="true" />
-          {recruitment.updatedAt}
-        </span>
+        <span className="muted-inline"><Clock3 size={15} aria-hidden="true" />{recruitment.updatedAt}</span>
       </div>
 
       <div className="card-title-row">
@@ -28,9 +25,7 @@ export function RecruitmentCard({ recruitment }: { recruitment: Recruitment }) {
           <p className="card-kicker">{recruitment.content} / {recruitment.mode}</p>
           <h2>{recruitment.title}</h2>
         </div>
-        <Link className="button secondary small" href={`/recruitments/${recruitment.id}`}>
-          詳細
-        </Link>
+        <Link className="button secondary small" href={`/recruitments/${recruitment.id}`}>詳細</Link>
       </div>
 
       <p className="card-condition">{recruitment.condition}</p>

@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import type { Session } from "next-auth";
 import { auth } from "@/auth";
@@ -44,7 +44,7 @@ export function isAdminDiscordId(discordUserId: string): boolean {
   return getAdminDiscordIds().includes(discordUserId);
 }
 
-export async function requireAdmin(callbackUrl = "/admin/users"): Promise<CurrentUser> {
+export async function requireAdmin(callbackUrl = "/admin"): Promise<CurrentUser> {
   const user = await requireLogin(callbackUrl);
 
   if (!isAdminDiscordId(user.id)) {
@@ -81,9 +81,7 @@ export async function checkGuildMembership(discordUserId: string): Promise<boole
   }
 
   const response = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members/${discordUserId}`, {
-    headers: {
-      Authorization: `Bot ${botToken}`
-    },
+    headers: { Authorization: `Bot ${botToken}` },
     cache: "no-store"
   });
 
@@ -92,12 +90,7 @@ export async function checkGuildMembership(discordUserId: string): Promise<boole
 
 export async function requireGuildMembershipApi(discordUserId: string): Promise<NextResponse | null> {
   const isMember = await checkGuildMembership(discordUserId);
-
-  if (isMember) {
-    return null;
-  }
-
-  return NextResponse.json({ error: GUILD_FORBIDDEN_MESSAGE }, { status: 403 });
+  return isMember ? null : NextResponse.json({ error: GUILD_FORBIDDEN_MESSAGE }, { status: 403 });
 }
 
 export async function requireGuildMembershipPage(discordUserId: string): Promise<void> {

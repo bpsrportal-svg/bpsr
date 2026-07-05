@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+﻿import { auth } from "@/auth";
 import { RecruitmentCreateForm } from "@/components/recruitment-create-form";
 import { SiteHeader } from "@/components/site-header";
 import { createSupabaseAdmin } from "@/lib/supabase";
@@ -32,11 +32,7 @@ export default async function NewRecruitmentPage() {
   return (
     <main className="app-shell">
       <SiteHeader isLoggedIn={Boolean(session?.user?.id)} />
-
-      <section className="page-title-band simple-title-band">
-        <h1>募集作成</h1>
-      </section>
-
+      <section className="page-title-band simple-title-band"><h1>募集作成</h1></section>
       <RecruitmentCreateForm contents={masters.contents} modes={masters.modes} classes={masters.classes} />
     </main>
   );

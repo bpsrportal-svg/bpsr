@@ -1,4 +1,4 @@
-import type { Recruitment } from "@/lib/portal-sample-data";
+﻿import type { Recruitment } from "@/lib/portal-sample-data";
 import { recruitments as sampleRecruitments } from "@/lib/portal-sample-data";
 import { createSupabaseAdmin } from "@/lib/supabase";
 
@@ -65,7 +65,7 @@ function toRecruitment(row: DbRecruitment): Recruitment {
       tank: slotTuple(row.role_slots?.TANK),
       healer: slotTuple(row.role_slots?.HEALER)
     },
-    tags: [row.status === "open" ? "募集中" : "編成中", row.vc_mode]
+    tags: [row.status === "open" ? "募集中" : "募集〆", row.vc_mode]
   };
 }
 

@@ -1,4 +1,5 @@
-import { z } from "zod";
+﻿import { z } from "zod";
+import { vcModes } from "@/lib/constants";
 
 export const recruitmentRoleKeys = ["DPS", "TANK", "HEALER"] as const;
 export type RecruitmentRoleKey = (typeof recruitmentRoleKeys)[number];
@@ -19,7 +20,7 @@ export const recruitmentCreateSchema = z.object({
   modeId: z.coerce.number().int().positive(),
   title: z.string().trim().min(4, "タイトルは4文字以上で入力してください").max(80),
   conditions: z.string().trim().max(800).optional().default(""),
-  vcMode: z.enum(["なし", "あり", "あり（プライベート）"]),
+  vcMode: z.enum(vcModes),
   roleSlots: z.object({
     DPS: roleSlotSchema,
     TANK: roleSlotSchema,

@@ -1,4 +1,6 @@
-export const CLASS_OPTIONS = [
+﻿import { z } from "zod";
+
+export const classOptions = [
   "狼弓",
   "鷹弓",
   "月影",
@@ -7,15 +9,17 @@ export const CLASS_OPTIONS = [
   "霜天",
   "烈風",
   "乱風",
+  "威咲",
+  "狂音",
   "剛身",
   "剛守",
   "光盾",
   "光砕",
   "森癒",
-  "威咲",
-  "狂音",
   "響奏"
 ] as const;
+
+export const CLASS_OPTIONS = classOptions;
 
 export const SEA_WEAPON_OPTIONS = [
   { label: "なし", value: "" },
@@ -39,5 +43,22 @@ export const LIMIT_BREAK_OPTIONS = [
 ] as const;
 
 export const IMAGINE_CATEGORIES = ["S1", "S2", "S3", "EVENT"] as const;
+
+export const roleKeys = ["DPS", "TANK", "HEALER", "MULTI"] as const;
+export const recruitmentRoleKeys = ["DPS", "TANK", "HEALER"] as const;
+
+export const roleLabelMap: Record<(typeof recruitmentRoleKeys)[number], string> = {
+  DPS: "DPS",
+  TANK: "タンク",
+  HEALER: "ヒーラー"
+};
+
+export const vcModes = ["なし", "あり", "あり（プライベート）"] as const;
+
+export function getRoleLabel(roleKey: string) {
+  return roleKey === "TANK" ? "タンク" : roleKey === "HEALER" ? "ヒーラー" : roleKey;
+}
+
+export const imagineCategorySchema = z.enum(IMAGINE_CATEGORIES);
 
 export type ImagineCategory = (typeof IMAGINE_CATEGORIES)[number];

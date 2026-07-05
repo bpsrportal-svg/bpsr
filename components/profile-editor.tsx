@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { CLASS_OPTIONS, IMAGINE_CATEGORIES, LIMIT_BREAK_OPTIONS, SEA_WEAPON_OPTIONS, type ImagineCategory } from "@/lib/constants";
@@ -18,6 +18,7 @@ type ImagineMaster = {
   category: ImagineCategory;
   name: string;
   sort_order: number;
+  icon_url?: string | null;
 };
 
 type UserImagine = {
@@ -80,17 +81,10 @@ export function ProfileEditor() {
   }, []);
 
   const groupedImagines = useMemo(() => {
-    const groups: Record<ImagineCategory, ImagineMaster[]> = {
-      S1: [],
-      S2: [],
-      S3: [],
-      EVENT: []
-    };
-
+    const groups: Record<ImagineCategory, ImagineMaster[]> = { S1: [], S2: [], S3: [], EVENT: [] };
     for (const imagine of data?.imagineMasters ?? []) {
       groups[imagine.category]?.push(imagine);
     }
-
     return groups;
   }, [data?.imagineMasters]);
 
@@ -107,18 +101,8 @@ export function ProfileEditor() {
 
     const response = await fetch("/api/profile", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        characterName,
-        uid,
-        className,
-        power,
-        dps3min,
-        seaWeaponLevel: seaWeapon,
-        imagines
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ characterName, uid, className, power, dps3min, seaWeaponLevel: seaWeapon, imagines })
     });
 
     if (!response.ok) {
@@ -149,10 +133,7 @@ export function ProfileEditor() {
         <div className="discord-user">
           {data.discordUser.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              alt=""
-              src={`https://cdn.discordapp.com/avatars/${data.discordUser.id}/${data.discordUser.avatar}.png?size=80`}
-            />
+            <img alt="" src={`https://cdn.discordapp.com/avatars/${data.discordUser.id}/${data.discordUser.avatar}.png?size=80`} />
           ) : null}
           <div>
             <span>{data.discordUser.globalName ?? data.discordUser.username}</span>
@@ -165,48 +146,12 @@ export function ProfileEditor() {
         <section className="form-section">
           <h2>基本情報</h2>
           <div className="form-grid">
-            <label>
-              キャラクター名
-              <input value={characterName} onChange={(event) => setCharacterName(event.target.value)} maxLength={80} />
-            </label>
-            <label>
-              UID
-              <input
-                inputMode="numeric"
-                maxLength={32}
-                pattern="[0-9]*"
-                value={uid}
-                onChange={(event) => setUid(event.target.value.replace(/\D/g, ""))}
-              />
-            </label>
-            <label>
-              クラス
-              <select value={className} onChange={(event) => setClassName(event.target.value as (typeof CLASS_OPTIONS)[number])}>
-                {CLASS_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              戦力
-              <input min={0} value={power} onChange={(event) => setPower(Number(event.target.value))} type="number" />
-            </label>
-            <label>
-              3分合計DPS
-              <input min={0} value={dps3min} onChange={(event) => setDps3min(Number(event.target.value))} type="number" />
-            </label>
-            <label>
-              海武器
-              <select value={seaWeaponLevel} onChange={(event) => setSeaWeaponLevel(event.target.value)}>
-                {SEA_WEAPON_OPTIONS.map((option) => (
-                  <option key={option.value || "none"} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <label>キャラクター名<input value={characterName} onChange={(event) => setCharacterName(event.target.value)} maxLength={80} /></label>
+            <label>UID<input inputMode="numeric" maxLength={32} pattern="[0-9]*" value={uid} onChange={(event) => setUid(event.target.value.replace(/\D/g, ""))} /></label>
+            <label>クラス<select value={className} onChange={(event) => setClassName(event.target.value as (typeof CLASS_OPTIONS)[number])}>{CLASS_OPTIONS.map((option) => <option key={option} value={option}>{option}</option>)}</select></label>
+            <label>戦力<input min={0} value={power} onChange={(event) => setPower(Number(event.target.value))} type="number" /></label>
+            <label>3分合計DPS<input min={0} value={dps3min} onChange={(event) => setDps3min(Number(event.target.value))} type="number" /></label>
+            <label>海武器<select value={seaWeaponLevel} onChange={(event) => setSeaWeaponLevel(event.target.value)}>{SEA_WEAPON_OPTIONS.map((option) => <option key={option.value || "none"} value={option.value}>{option.label}</option>)}</select></label>
           </div>
         </section>
 
@@ -217,20 +162,8 @@ export function ProfileEditor() {
               {groupedImagines[category].map((imagine) => (
                 <label className="imagine-row" key={imagine.id}>
                   <span>{imagine.name}</span>
-                  <select
-                    value={limitBreaks[imagine.id] ?? -1}
-                    onChange={(event) =>
-                      setLimitBreaks((current) => ({
-                        ...current,
-                        [imagine.id]: Number(event.target.value)
-                      }))
-                    }
-                  >
-                    {LIMIT_BREAK_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
+                  <select value={limitBreaks[imagine.id] ?? -1} onChange={(event) => setLimitBreaks((current) => ({ ...current, [imagine.id]: Number(event.target.value) }))}>
+                    {LIMIT_BREAK_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
                 </label>
               ))}

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Filter, Plus, Search } from "lucide-react";
 import { auth } from "@/auth";
 import { RecruitmentCard } from "@/components/recruitment-card";
@@ -17,9 +17,7 @@ export default async function RecruitmentsPage({ searchParams }: RecruitmentsPag
   ]);
   const selectedContent = typeof resolvedSearchParams.content === "string" ? resolvedSearchParams.content : "";
   const contentNames = Array.from(new Set(recruitments.map((item) => item.content).filter(Boolean)));
-  const visibleRecruitments = selectedContent
-    ? recruitments.filter((item) => item.content === selectedContent)
-    : recruitments;
+  const visibleRecruitments = selectedContent ? recruitments.filter((item) => item.content === selectedContent) : recruitments;
 
   return (
     <main className="app-shell">
@@ -27,10 +25,7 @@ export default async function RecruitmentsPage({ searchParams }: RecruitmentsPag
 
       <section className="page-title-band simple-title-band">
         <h1>募集一覧</h1>
-        <Link className="button primary" href="/recruitments/new">
-          <Plus size={18} aria-hidden="true" />
-          募集作成
-        </Link>
+        <Link className="button primary" href="/recruitments/new"><Plus size={18} aria-hidden="true" />募集作成</Link>
       </section>
 
       <section className="search-toolbar" aria-label="募集一覧">
@@ -39,31 +34,15 @@ export default async function RecruitmentsPage({ searchParams }: RecruitmentsPag
           <span className="sr-only">キーワード</span>
           <input placeholder="タイトル、条件、コンテンツで検索" />
         </label>
-        <select aria-label="状態">
-          <option>募集中</option>
-          <option>募集〆</option>
-          <option>すべて</option>
-        </select>
-        <select aria-label="VC">
-          <option>VC指定なし</option>
-          <option>VCあり</option>
-          <option>VCなし</option>
-        </select>
-        <button className="button secondary" type="button">
-          <Filter size={17} aria-hidden="true" />
-          絞り込み
-        </button>
+        <select aria-label="状態"><option>募集中</option><option>募集〆</option><option>すべて</option></select>
+        <select aria-label="VC"><option>VC指定なし</option><option>VCあり</option><option>VCなし</option></select>
+        <button className="button secondary" type="button"><Filter size={17} aria-hidden="true" />絞り込み</button>
       </section>
 
       <section className="quick-filter-band left" aria-label="コンテンツ名フィルター">
-        <Link className={!selectedContent ? "filter-chip active" : "filter-chip"} href="/recruitments">
-          <Filter size={15} aria-hidden="true" />
-          すべて
-        </Link>
+        <Link className={!selectedContent ? "filter-chip active" : "filter-chip"} href="/recruitments"><Filter size={15} aria-hidden="true" />すべて</Link>
         {contentNames.map((name) => (
-          <Link className={selectedContent === name ? "filter-chip active" : "filter-chip"} href={"/recruitments?content=" + encodeURIComponent(name)} key={name}>
-            {name}
-          </Link>
+          <Link className={selectedContent === name ? "filter-chip active" : "filter-chip"} href={"/recruitments?content=" + encodeURIComponent(name)} key={name}>{name}</Link>
         ))}
       </section>
 

@@ -1,52 +1,70 @@
 import Link from "next/link";
-import { Bell, BookOpen, Database, ImageIcon, ListChecks, Megaphone, ScrollText, ShieldAlert, Sparkles, UsersRound } from "lucide-react";
+import { ShieldAlert, UsersRound } from "lucide-react";
+import { AdminMasterConsole } from "@/components/admin-master-console";
 import { SiteHeader } from "@/components/site-header";
-import { requireAdmin } from "@/lib/authz";
+import { masterConfigs, masterResources, type MasterResource } from "@/lib/admin-masters";
+import { AdminForbiddenError, requireAdmin } from "@/lib/authz";
+import { createSupabaseAdmin } from "@/lib/supabase";
 
-const adminItems = [
-  { title: "登録ユーザー一覧", description: "プロフィール登録済みユーザーを確認します。", href: "/admin/users", icon: UsersRound, ready: true },
-  { title: "イマジン管理", description: "イマジン名、カテゴリ、アイコンなどを管理します。", icon: Sparkles, ready: false },
-  { title: "コンテンツ管理", description: "ダンジョン、レイド、モード分類を管理します。", icon: Database, ready: false },
-  { title: "クラス管理", description: "クラス名とロール分類を管理します。", icon: ListChecks, ready: false },
-  { title: "ロール管理", description: "DPS、タンク、ヒーラーの設定を管理します。", icon: BookOpen, ready: false },
-  { title: "アイコン管理", description: "Webで利用する画像やアイコンを管理します。", icon: ImageIcon, ready: false },
-  { title: "募集管理", description: "作成済み募集の状態を確認します。", icon: Megaphone, ready: false },
-  { title: "問題報告", description: "ユーザーからの報告を確認します。", icon: ShieldAlert, ready: false },
-  { title: "ログ", description: "Bot通知や管理操作の履歴を確認します。", icon: ScrollText, ready: false },
-  { title: "お知らせ", description: "ポータル内のお知らせを管理します。", icon: Bell, ready: false }
-];
+type MasterRow = Record<string, string | number | boolean | null | undefined>;
 
 export default async function AdminPage() {
-  await requireAdmin("/admin");
+  try {
+    await requireAdmin("/admin");
+  } catch (error) {
+    if (error instanceof AdminForbiddenError) {
+      return <ForbiddenView />;
+    }
+    throw error;
+  }
 
+  const initialRows = await fetchMasterRows();
+
+  return (
+    <main className="app-shell admin-console-shell">
+      <SiteHeader isLoggedIn />
+
+      <section className="page-title-band admin-title-band">
+        <div>
+          <p className="eyebrow">BPSRPortal Admin</p>
+          <h1>管理</h1>
+          <p className="lead">募集、プロフィール、Bot通知で使うマスターデータをここから更新します。</p>
+        </div>
+        <Link className="button secondary" href="/admin/users">
+          <UsersRound size={18} aria-hidden="true" />
+          登録ユーザー一覧
+        </Link>
+      </section>
+
+      <AdminMasterConsole initialRows={initialRows} />
+    </main>
+  );
+}
+
+async function fetchMasterRows() {
+  const supabase = createSupabaseAdmin();
+  const entries = await Promise.all(
+    masterResources.map(async (resource) => {
+      const config = masterConfigs[resource];
+      const { data, error } = await supabase.from(config.table).select(config.select).order(config.order, { ascending: true });
+      if (error) {
+        throw new Error(`${resource}: ${error.message}`);
+      }
+      return [resource, data ?? []] as const;
+    })
+  );
+
+  return Object.fromEntries(entries) as unknown as Record<MasterResource, MasterRow[]>;
+}
+
+function ForbiddenView() {
   return (
     <main className="app-shell">
       <SiteHeader isLoggedIn />
-
-      <section className="page-title-band simple-title-band">
-        <h1>管理</h1>
-      </section>
-
-      <section className="admin-menu-grid" aria-label="管理メニュー">
-        {adminItems.map((item) => {
-          const Icon = item.icon;
-          const content = (
-            <>
-              <div className="admin-menu-icon"><Icon size={20} aria-hidden="true" /></div>
-              <div>
-                <h2>{item.title}</h2>
-                <p>{item.description}</p>
-              </div>
-              <span className={item.ready ? "status-pill open" : "status-pill"}>{item.ready ? "開く" : "準備中"}</span>
-            </>
-          );
-
-          return item.href ? (
-            <Link className="admin-menu-card" href={item.href} key={item.title}>{content}</Link>
-          ) : (
-            <div className="admin-menu-card disabled" key={item.title}>{content}</div>
-          );
-        })}
+      <section className="form-section forbidden-panel">
+        <ShieldAlert size={28} aria-hidden="true" />
+        <h1>403 Forbidden</h1>
+        <p className="lead">管理者のみ閲覧できます。</p>
       </section>
     </main>
   );
