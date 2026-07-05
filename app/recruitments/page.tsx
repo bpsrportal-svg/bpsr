@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Filter, Plus, Search } from "lucide-react";
 import { auth } from "@/auth";
 import { RecruitmentCard } from "@/components/recruitment-card";
@@ -34,7 +34,6 @@ export default async function RecruitmentsPage({ searchParams }: RecruitmentsPag
           <span className="sr-only">キーワード</span>
           <input placeholder="タイトル、条件、コンテンツで検索" />
         </label>
-        <select aria-label="状態"><option>募集中</option><option>募集〆</option><option>すべて</option></select>
         <select aria-label="VC"><option>VC指定なし</option><option>VCあり</option><option>VCなし</option></select>
         <button className="button secondary" type="button"><Filter size={17} aria-hidden="true" />絞り込み</button>
       </section>

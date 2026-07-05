@@ -128,14 +128,14 @@ export async function getRecruitmentsForPage(): Promise<Recruitment[]> {
     const { data, error } = await supabase
       .from("recruitments")
       .select(recruitmentSelect)
-      .in("status", ["open", "in_progress"])
+      .eq("status", "open")
       .order("updated_at", { ascending: false })
       .limit(30);
 
-    if (error || !data?.length) return sampleRecruitments;
+    if (error || !data?.length) return sampleRecruitments.filter((item) => item.status === "open");
     return (data as DbRecruitment[]).map(toRecruitment);
   } catch {
-    return sampleRecruitments;
+    return sampleRecruitments.filter((item) => item.status === "open");
   }
 }
 
