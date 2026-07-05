@@ -1882,3 +1882,23 @@ html[data-theme="light"] .status-pill.closed {
     display: grid;
   }
 }
+
+
+html[data-theme="light"] .host-chip,
+html[data-theme="light"] .tag-row span {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #172554;
+}
+
+html[data-theme="light"] .button.secondary.small {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .button.secondary.small:hover {
+  border-color: #0284c7;
+  background: #f0f9ff;
+  color: #075985;
+}
