@@ -129,12 +129,29 @@ async function sendDm(client, discordUserId, content) {
   }
 }
 
+async function updateRecruitmentNotificationMessage(client, recruitment, host) {
+  const targets = [
+    [recruitment.discord_notification_channel_id, recruitment.discord_notification_message_id],
+    [recruitment.public_message_channel_id, recruitment.public_message_id],
+  ].filter(([channelId, messageId]) => channelId && messageId);
+
+  for (const [channelId, messageId] of targets) {
+    const channel = await client.channels.fetch(channelId).catch(() => null);
+    const message = channel ? await channel.messages.fetch(messageId).catch(() => null) : null;
+    if (message) {
+      await message.edit({ embeds: [recruitmentEmbed(recruitment, host)] });
+    }
+  }
+}
+
 async function handlePartyReadyNotify(client, job) {
   const recruitment = await db.getRecruitment(job.recruitment_id);
   if (!recruitment) throw new Error(`Recruitment not found: ${job.recruitment_id}`);
 
   const host = await db.getProfile(recruitment.owner_discord_user_id);
   if (!host) throw new Error(`Recruitment host profile not found: ${recruitment.owner_discord_user_id}`);
+
+  await updateRecruitmentNotificationMessage(client, recruitment, host);
 
   const applications = await db.getApprovedApplications(recruitment.id);
   const memberProfiles = [];
